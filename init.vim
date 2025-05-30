@@ -8,7 +8,7 @@ set autoindent
 call plug#begin('~/.local/share/nvim/site/plugged')
 " Theme stuff
 Plug 'tiagovla/tokyodark.nvim'
-Plug 'scottmckendry/cyberdream.nvim'
+Plug 'Mofiqul/dracula.nvim'
 
 " LSP support
 Plug 'neovim/nvim-lspconfig'
@@ -46,36 +46,20 @@ Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'Ninja' }
 Plug 'windwp/nvim-autopairs'
 call plug#end()
 set termguicolors
-colorscheme cyberdream
-
-" Theme settings
-lua << EOF
-    require('cyberdream').setup({
-        variant = "default",
-        transparent = true,
-        saturation = 1,
-        italic_comments = true,
-        borderless_pickers = false,
-        terminal_colors = true,
-        cache = false,
-        extensions = { telescope = true }
-    })
-EOF
+colorscheme dracula
 
 lua << EOF
     vim.o.winblend = 20
     vim.o.pumblend = 20
 
     vim.cmd([[
-        hi Normal       guibg=NONE
-        hi NormalNC     guibg=NONE
-        hi SignColumn   guibg=NONE
-        hi Pmenu        guibg=#2a2e3b guifg=#bbc2cf
-        hi PmenuSel     guibg=#3e4452 guifg=ffffff
-        hi PmenuSbar    guibg=#44475a
-        hi PmenuThumb   guibg=#6272a4
-        hi NormalFloat  guibg=NONE
-        hi FloatBoarder guibg=NONE
+        highlight Pmenu         guibg=#44475a guifg=#f8f8f2
+        highlight PmenuSel      guibg=#6272a4 guifg=#f8f8f2
+        highlight PmenuSbar     guibg=#44475a
+        highlight PmenuThumb    guibg=#6272a4
+
+        highlight NormalFloat   guibg=#282a36 guifg=#f8f8f2
+        highlight FloatBoarder  guibg=#282a36 guifg=#6272a4 
     ]])
 EOF
 
@@ -109,6 +93,11 @@ lua << EOF
   local cmp     = require('cmp')
   local luasnip = require('luasnip')
 
+  local rounded_border_style = {
+    border = { "╭", "─", "╮", "│", "╯", "─", "╰", "│" },
+    winhighlight = "Normal:CmpMenu,CursorLine:PmenuSel,Search:None" 
+  }
+
   cmp.setup({
     snippet = {
       expand = function(args)
@@ -117,13 +106,9 @@ lua << EOF
     },
 
     window = {
-      completion = cmp.config.window.bordered({
-        winhighlight = "Normal:Pmenu,CursorLine:PmenuSel,FloatBorder:PmenuBorder",
-      }),
-      documentation = cmp.config.window.bordered({
-        winhighlight = "NormalFloat:CmpDoc,FloatBorder:CmpDocBorder",
-      }),
-    },
+        completion = cmp.config.window.bordered(rounded_border_style),
+        documentation = cmp.config.window.bordered(rounded_border_style),
+        },
 
     mapping = cmp.mapping.preset.insert({
       ['<C-Space>'] = cmp.mapping.complete(),
